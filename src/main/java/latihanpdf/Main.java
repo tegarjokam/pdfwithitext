@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -155,7 +156,7 @@ public class Main {
         c1.setVerticalAlignment(Element.ALIGN_CENTER);
         table.addCell(c1);
         
-        c1 = new PdfPCell(new Phrase("Tanggal               : 12 Januari 2020", bidangCreatorFont));
+        c1 = new PdfPCell(new Phrase("Tanggal               : 30 Januari 2020", bidangCreatorFont));
         c1.setPaddingTop(5);
         c1.setBorder(Rectangle.NO_BORDER);
         c1.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -171,6 +172,36 @@ public class Main {
 	    document.add(table);
 	}
 	
+	public static void addContent(Document document) throws DocumentException, IOException {
+		
+		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+		Font introFont = new Font(base, 12, Font.NORMAL);
+		
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100);
+		
+		Chunk chunk = new Chunk();
+		chunk.append("Bersama dengan Surat Permintaan Barang ini pegawai yang bertanda tangan pada surat ini meminta barang persediaan untuk digunakan operasional Bagian/Bidang, adapun rincian permintaan barang tersebut sebagai berikut ");
+		
+		Paragraph intro = new Paragraph();
+		intro.add(chunk);
+		intro.setAlignment(Element.ALIGN_JUSTIFIED);
+		intro.setFirstLineIndent(40);
+		intro.setIndentationLeft(20);
+		intro.setIndentationRight(10);
+		intro.setSpacingAfter(20);
+		intro.setSpacingBefore(2);
+		
+        PdfPCell c1 = new PdfPCell();
+        c1.addElement(intro);
+        c1.setPaddingTop(30);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+	    
+	    document.add(table);
+	}
+	
 	
 	public static void main(String[] args) throws DocumentException, URISyntaxException, MalformedURLException, IOException {
 		
@@ -181,7 +212,7 @@ public class Main {
 		addKop(document, writer);
 		addHeader(document);
 		addBidangCreator(document, writer);
-//		addContent(document);
+		addContent(document);
 //		addFooter(document);
 		
 		document.close();
