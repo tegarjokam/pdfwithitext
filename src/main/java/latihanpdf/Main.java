@@ -28,7 +28,7 @@ public class Main {
     private static Path destinationPath = Paths.get("src","main","resources","SPB-02.pdf");
 	private static Path path = Paths.get("src","main","resources","font","arial.ttf");
     
-	public static void addHeader(Document document) throws DocumentException, URISyntaxException, MalformedURLException, IOException {
+	public static void addKop(Document document, PdfWriter writer) throws DocumentException, URISyntaxException, MalformedURLException, IOException {
 		document.addTitle("Surat Permintaan Barang");
         document.addSubject("SPB");
         document.addKeywords("Spb, Barang");
@@ -41,8 +41,6 @@ public class Main {
 		Font kanwilTitle = new Font(base, 11, Font.BOLD);
 		Font alamatTitle = new Font(base, 7, Font.BOLD);
 		alamatTitle.setColor(BaseColor.GRAY);
-		
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(destinationPath.toString()));
 		         
 		document.open();
 		
@@ -114,12 +112,77 @@ public class Main {
 		
 	}
 	
+	public static void addHeader(Document document) throws DocumentException, IOException {
+		
+		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+		Font spbTitleFont = new Font(base, 12, Font.BOLD);
+		Font spbNumberFont = new Font(base, 12, Font.NORMAL);
+		
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100);
+		
+        PdfPCell c1 = new PdfPCell(new Phrase("SURAT PERMINTAAN BARANG", spbTitleFont));
+        c1.setPaddingTop(10);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell(new Phrase("NOMOR : SPB-01/WBC.19/BG.01/2020", spbNumberFont));
+        c1.setPaddingTop(5);
+        c1.setBorder(Rectangle.NO_BORDER);
+	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+	    c1.setVerticalAlignment(Element.ALIGN_CENTER);
+	    table.addCell(c1);
+	    
+	    document.add(table);
+	    
+      
+	}
+	
+	public static void addBidangCreator(Document document, PdfWriter writer) throws DocumentException, IOException {
+		
+		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+		Font bidangCreatorFont = new Font(base, 12, Font.NORMAL);
+		
+		PdfPTable table = new PdfPTable(1);
+		table.setWidthPercentage(100);
+		
+        PdfPCell c1 = new PdfPCell(new Phrase("Bidang/Bagian    : Bagian Umum", bidangCreatorFont));
+        c1.setPaddingTop(30);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell(new Phrase("Tanggal               : 12 Januari 2020", bidangCreatorFont));
+        c1.setPaddingTop(5);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        
+        PdfContentByte canvas = writer.getDirectContent();
+        canvas.setColorStroke(BaseColor.BLACK);
+        canvas.moveTo(40, 580);
+        canvas.lineTo(550, 580);
+        canvas.closePathStroke();
+	    
+	    document.add(table);
+	}
+	
+	
 	public static void main(String[] args) throws DocumentException, URISyntaxException, MalformedURLException, IOException {
 		
 		Document document = new Document(PageSize.A4);
-		document.open();
 		
+		document.open();
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(destinationPath.toString()));
+		addKop(document, writer);
 		addHeader(document);
+		addBidangCreator(document, writer);
+//		addContent(document);
+//		addFooter(document);
 		
 		document.close();
 	}
