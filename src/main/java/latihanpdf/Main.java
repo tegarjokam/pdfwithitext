@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -105,8 +107,8 @@ public class Main {
         
         PdfContentByte canvas = writer.getDirectContent();
         canvas.setColorStroke(BaseColor.BLACK);
-        canvas.moveTo(40, 710);
-        canvas.lineTo(550, 710);
+        canvas.moveTo(40, 700);
+        canvas.lineTo(550, 700);
         canvas.closePathStroke();
       
         document.add(table);
@@ -123,7 +125,7 @@ public class Main {
 		table.setWidthPercentage(100);
 		
         PdfPCell c1 = new PdfPCell(new Phrase("SURAT PERMINTAAN BARANG", spbTitleFont));
-        c1.setPaddingTop(10);
+        c1.setPaddingTop(15);
         c1.setBorder(Rectangle.NO_BORDER);
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         c1.setVerticalAlignment(Element.ALIGN_CENTER);
@@ -134,6 +136,7 @@ public class Main {
         c1.setBorder(Rectangle.NO_BORDER);
 	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 	    c1.setVerticalAlignment(Element.ALIGN_CENTER);
+	    c1.setPaddingBottom(20);
 	    table.addCell(c1);
 	    
 	    document.add(table);
@@ -146,33 +149,52 @@ public class Main {
 		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
 		Font bidangCreatorFont = new Font(base, 12, Font.NORMAL);
 		
-		PdfPTable table = new PdfPTable(1);
+		PdfPTable table = new PdfPTable(4);
 		table.setWidthPercentage(100);
 		
-        PdfPCell c1 = new PdfPCell(new Phrase("Bidang/Bagian    : Bagian Umum", bidangCreatorFont));
-        c1.setPaddingTop(30);
+        PdfPCell c1 = new PdfPCell(new Phrase("Dari", bidangCreatorFont));
+        c1.setPaddingLeft(20);
         c1.setBorder(Rectangle.NO_BORDER);
         c1.setHorizontalAlignment(Element.ALIGN_LEFT);
         c1.setVerticalAlignment(Element.ALIGN_CENTER);
         table.addCell(c1);
         
-        c1 = new PdfPCell(new Phrase("Tanggal               : 30 Januari 2020", bidangCreatorFont));
-        c1.setPaddingTop(5);
+        c1 = new PdfPCell(new Phrase(":  Bagian Umum", bidangCreatorFont));
+        c1.setColspan(3);
         c1.setBorder(Rectangle.NO_BORDER);
         c1.setHorizontalAlignment(Element.ALIGN_LEFT);
         c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell(new Phrase("Tanggal", bidangCreatorFont));
+        c1.setPaddingTop(5);
+        c1.setPaddingLeft(20);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell(new Phrase(":  30 Januari 2020", bidangCreatorFont));
+        c1.setPaddingTop(5);
+        c1.setColspan(3);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        c1.setPaddingBottom(15);
         table.addCell(c1);
         
         PdfContentByte canvas = writer.getDirectContent();
         canvas.setColorStroke(BaseColor.BLACK);
-        canvas.moveTo(40, 580);
-        canvas.lineTo(550, 580);
+        canvas.moveTo(40, 590);
+        canvas.lineTo(550, 590);
         canvas.closePathStroke();
 	    
 	    document.add(table);
+	    
+	    
 	}
 	
-	public static void addContent(Document document) throws DocumentException, IOException {
+	public static void addContent(Document document) throws DocumentException, IOException, URISyntaxException {
 		
 		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
 		Font introFont = new Font(base, 12, Font.NORMAL);
@@ -185,21 +207,166 @@ public class Main {
 		
 		Paragraph intro = new Paragraph();
 		intro.add(chunk);
+		intro.setFont(introFont);
 		intro.setAlignment(Element.ALIGN_JUSTIFIED);
 		intro.setFirstLineIndent(40);
 		intro.setIndentationLeft(20);
 		intro.setIndentationRight(10);
 		intro.setSpacingAfter(20);
-		intro.setSpacingBefore(2);
 		
         PdfPCell c1 = new PdfPCell();
         c1.addElement(intro);
-        c1.setPaddingTop(30);
+        c1.setPaddingTop(10);
         c1.setBorder(Rectangle.NO_BORDER);
         c1.setVerticalAlignment(Element.ALIGN_CENTER);
         table.addCell(c1);
 	    
 	    document.add(table);
+	    
+	    addListGoods(document);
+	}
+	
+	public static void addListGoods(Document document) throws DocumentException, IOException {
+		
+		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+		Font headerItem = new Font(base, 12, Font.BOLD);
+		
+		PdfPTable table = new PdfPTable(4);
+		table.setWidthPercentage(80);
+		
+		PdfPCell c1 = new PdfPCell(new Phrase("Kode Stok", headerItem));
+		c1.setPaddingLeft(10);
+		c1.setPaddingBottom(8);
+		c1.setPaddingTop(5);
+		table.addCell(c1);
+		
+		c1 = new PdfPCell(new Phrase("Nama Barang", headerItem));
+		c1.setPaddingLeft(10);
+		c1.setPaddingBottom(8);
+		c1.setPaddingTop(5);
+		table.addCell(c1);
+		
+		c1 = new PdfPCell(new Phrase("Jumlah", headerItem));
+		c1.setPaddingLeft(10);
+		c1.setPaddingBottom(8);
+		c1.setPaddingTop(5);
+		table.addCell(c1);
+		
+		c1 = new PdfPCell(new Phrase("Satuan", headerItem));
+		c1.setPaddingLeft(10);
+		c1.setPaddingBottom(8);
+		c1.setPaddingTop(5);
+		table.addCell(c1);
+		
+		table.addCell("2.1");
+		table.addCell("2,2");
+		table.addCell("2,3");
+		table.addCell("2,4");
+		table.addCell("3,1");
+		table.addCell("3,2");
+		table.addCell("3,3");
+		table.addCell("3,4");
+		table.addCell("4,1");
+		table.addCell("4,2");
+		table.addCell("4,3");
+		table.addCell("4,4");
+		table.addCell("5,1");
+		table.addCell("5,2");
+		table.addCell("5,3");
+		table.addCell("5,4");
+
+	    document.add(table);
+		
+	}
+	
+	public static void addFooter(Document document) throws DocumentException, IOException, URISyntaxException {
+		
+		BaseFont base = BaseFont.createFont(path.toString(), BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+		Font outerFont = new Font(base, 12, Font.NORMAL);
+		
+		PdfPTable table = new PdfPTable(3);
+		table.setWidthPercentage(100);
+		
+        Chunk outerWord = new Chunk();
+		outerWord.append("Demikian disampaikan, atas perhatiannya kami ucapkan terima kasih.");
+		
+		Paragraph outerSentence = new Paragraph();
+		outerSentence.add(outerWord);
+		outerSentence.setFont(outerFont);
+		outerSentence.setAlignment(Element.ALIGN_JUSTIFIED);
+		outerSentence.setFirstLineIndent(40);
+		outerSentence.setIndentationLeft(20);
+		outerSentence.setIndentationRight(10);
+		outerSentence.setSpacingAfter(20);
+		
+		PdfPCell c1 = new PdfPCell();
+        c1.addElement(outerSentence);
+        c1.setPaddingTop(13);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        System.out.println("rowspan = " + c1.getRowspan());
+        c1.setColspan(3);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell();
+        c1.addElement(new Phrase(" "));
+        c1.setBorder(Rectangle.NO_BORDER);
+        table.addCell(c1);
+		
+        Chunk signDateWord = new Chunk();
+        signDateWord.append("Ambon, 30 Januari 2020");
+        Paragraph signDate = new Paragraph();
+        signDate.add(signDateWord);
+        signDate.setFont(outerFont);
+        signDate.setAlignment(Element.ALIGN_LEFT);
+        signDate.setIndentationRight(40);
+        
+        c1 = new PdfPCell();
+        c1.addElement(signDate);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        c1.setPaddingLeft(160);
+        c1.setColspan(2);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell();
+        c1.addElement(new Phrase(" "));
+        c1.setBorder(Rectangle.NO_BORDER);
+        table.addCell(c1);
+        
+        Path pathImg = Paths.get(ClassLoader.getSystemResource("LogoKemenkeu.jpg").toURI());
+		Image img = Image.getInstance(pathImg.toAbsolutePath().toString());
+        
+        c1 = new PdfPCell(img);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        c1.setPaddingLeft(180);
+        c1.setColspan(2);
+        table.addCell(c1);
+        
+        c1 = new PdfPCell();
+        c1.addElement(new Phrase(" "));
+        c1.setBorder(Rectangle.NO_BORDER);
+        table.addCell(c1);
+
+        Chunk employeeName = new Chunk();
+        employeeName.append("Gama Wira Nusa");
+        Paragraph eName = new Paragraph();
+        eName.add(employeeName);
+        eName.setFont(outerFont);
+        eName.setAlignment(Element.ALIGN_LEFT);
+        
+        c1 = new PdfPCell();
+        c1.addElement(eName);
+        c1.setBorder(Rectangle.NO_BORDER);
+        c1.setPaddingLeft(160);
+        c1.setVerticalAlignment(Element.ALIGN_CENTER);
+        c1.setColspan(2);
+        table.addCell(c1);
+        
+	    document.add(table);
+	    
+      
 	}
 	
 	
@@ -209,11 +376,12 @@ public class Main {
 		
 		document.open();
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(destinationPath.toString()));
+		
 		addKop(document, writer);
 		addHeader(document);
 		addBidangCreator(document, writer);
 		addContent(document);
-//		addFooter(document);
+		addFooter(document);
 		
 		document.close();
 	}
